@@ -76,8 +76,7 @@ export default class Task extends Component {
     return (
       <li className={liClass}>
         <div className="view">
-          <input className="toggle" type="checkbox" onClick={onToggleDone} id={id} />
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+          <input className="toggle" type="checkbox" onClick={onToggleDone} id={id} defaultChecked={completed} />
           <label htmlFor={id}>
             <span className="description">{label}</span>
             <span className="created">created {formatDistanceToNow(createdDate, { includeSeconds: true })} ago</span>
