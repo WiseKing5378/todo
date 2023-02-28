@@ -18,7 +18,7 @@ export default class Task extends Component {
 
   static propTypes = {
     completed: PropTypes.bool,
-    id: PropTypes.number,
+    id: PropTypes.string,
     label: PropTypes.string,
     createdDate: PropTypes.instanceOf(Date),
     onToggleDone: PropTypes.func,
@@ -48,7 +48,7 @@ export default class Task extends Component {
     }
   };
 
-  OnLabelChange = (e) => {
+  onLabelChange = (e) => {
     this.setState(() => {
       return { editLabel: e.target.value };
     });
@@ -65,9 +65,10 @@ export default class Task extends Component {
 
   render() {
     const { editing } = this.state;
-    const { label, completed, onDeleted, onToggleDone, createdDate } = this.props;
+    const { label, completed, onDeleted, onToggleDone, createdDate, id } = this.props;
 
     let liClass = '';
+
     if (completed) liClass = 'completed';
 
     if (editing) liClass = 'editing';
@@ -75,14 +76,9 @@ export default class Task extends Component {
     return (
       <li className={liClass}>
         <div className="view">
-          <input
-            className="toggle"
-            type="checkbox"
-            onClick={(this.onToggleClick, onToggleDone)}
-            onKeyDown={this.onToggleClick}
-          />
+          <input className="toggle" type="checkbox" onClick={onToggleDone} id={id} />
           {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label>
+          <label htmlFor={id}>
             <span className="description">{label}</span>
             <span className="created">created {formatDistanceToNow(createdDate, { includeSeconds: true })} ago</span>
           </label>
@@ -101,7 +97,7 @@ export default class Task extends Component {
             type="text"
             className="edit"
             defaultValue={label}
-            onChange={this.OnLabelChange}
+            onChange={this.onLabelChange}
             onKeyDown={this.onFormKeyPress}
           />
         </form>

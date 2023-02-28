@@ -10,21 +10,21 @@ export default class Footer extends Component {
   static defaultProps = {
     activeItems: 0,
     clearAllCompleted: () => {},
-    viewState: () => {},
+    setActiveFilter: () => {},
   };
 
   static propTypes = {
     activeItems: PropTypes.number,
     clearAllCompleted: PropTypes.func,
-    viewState: PropTypes.func,
+    setActiveFilter: PropTypes.func,
   };
 
   render() {
-    const { activeItems, clearAllCompleted, viewState } = this.props;
+    const { activeItems, clearAllCompleted, setActiveFilter, activeFilter } = this.props;
     return (
       <footer className="footer">
         <span className="todo-count">{activeItems} items left</span>
-        <TasksFilter viewState={viewState} />
+        <TasksFilter setActiveFilter={setActiveFilter} activeFilter={activeFilter} />
         <button
           type="button"
           className="clear-completed"

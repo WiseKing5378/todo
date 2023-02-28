@@ -1,27 +1,27 @@
 /* eslint-disable react/static-property-placement */
 import { Component } from 'react';
-import './task-filter.css';
+import './TaskFilter.css';
 import PropTypes from 'prop-types';
 
 export default class TaskFilter extends Component {
   static defaultProps = {
-    viewState: () => {},
+    setActiveFilter: () => {},
   };
 
   static propTypes = {
-    viewState: PropTypes.func,
+    setActiveFilter: PropTypes.func,
   };
 
   render() {
-    const { viewState } = this.props;
+    const { setActiveFilter, activeFilter } = this.props;
     return (
       <ul className="filters">
         <li>
           <button
             type="button"
-            className="selected"
+            className={activeFilter === 'all' ? 'selected' : ''}
             onClick={() => {
-              viewState('all');
+              setActiveFilter('all');
             }}
           >
             All
@@ -30,8 +30,9 @@ export default class TaskFilter extends Component {
         <li>
           <button
             type="button"
+            className={activeFilter === 'active' ? 'selected' : ''}
             onClick={() => {
-              viewState('active');
+              setActiveFilter('active');
             }}
           >
             Active
@@ -40,8 +41,9 @@ export default class TaskFilter extends Component {
         <li>
           <button
             type="button"
+            className={activeFilter === 'completed' ? 'selected' : ''}
             onClick={() => {
-              viewState('completed');
+              setActiveFilter('completed');
             }}
           >
             Completed
