@@ -65,7 +65,7 @@ export default class Task extends Component {
 
   render() {
     const { editing } = this.state;
-    const { label, completed, onDeleted, onToggleDone, createdDate, id } = this.props;
+    const { label, completed, onDeleted, onToggleDone, createdDate, id, taskTime } = this.props;
 
     let liClass = '';
 
@@ -79,6 +79,11 @@ export default class Task extends Component {
           <input className="toggle" type="checkbox" onClick={onToggleDone} id={id} defaultChecked={completed} />
           <label htmlFor={id}>
             <span className="description">{label}</span>
+            <div className="time-manage-btn">
+              <button type="button" aria-label="task" className="start" />
+              <button type="button" aria-label="task" className="pause" />
+              <span className="created">{taskTime}</span>
+            </div>
             <span className="created">created {formatDistanceToNow(createdDate, { includeSeconds: true })} ago</span>
           </label>
           <button

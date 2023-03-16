@@ -40,10 +40,10 @@ export default class App extends Component {
     });
   };
 
-  addItem = (label) => {
+  addItem = (label, taskTime) => {
     this.setState(({ todoData }) => {
       return {
-        todoData: [...todoData, { label, id: uuid(), completed: false, createdDate: new Date() }],
+        todoData: [...todoData, { label, id: uuid(), completed: false, createdDate: new Date(), taskTime }],
       };
     });
   };
@@ -65,7 +65,7 @@ export default class App extends Component {
 
   render() {
     const { todoData, activeFilter } = this.state;
-
+    console.log(todoData);
     let viewItems = todoData;
     if (activeFilter === 'completed') viewItems = todoData.filter((i) => i.completed);
     if (activeFilter === 'active') viewItems = todoData.filter((i) => !i.completed);

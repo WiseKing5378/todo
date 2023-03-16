@@ -22,7 +22,7 @@ export default class TaskList extends Component {
   render() {
     const { todos, onDeleted, onToggleDone, onEdit } = this.props;
     const elem = todos.map((i) => {
-      const { label, id, completed, createdDate } = i;
+      const { label, id, completed, createdDate, taskTime } = i;
       return (
         <Task
           createdDate={createdDate}
@@ -30,6 +30,7 @@ export default class TaskList extends Component {
           id={id}
           label={label}
           completed={completed}
+          taskTime={taskTime}
           onEdit={(...args) => onEdit(...args)}
           onDeleted={() => onDeleted(id)}
           onToggleDone={() => onToggleDone(id)}

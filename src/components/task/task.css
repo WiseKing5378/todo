@@ -125,7 +125,40 @@
   margin-bottom: -1px;
 }
 
-li form{
+li form {
   margin: 0px;
+}
 
+.time-manage-btn {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.start,
+.pause {
+  display: flex;
+  align-items: center;
+  justify-content: baseline;
+  font-size: 15px;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+}
+.pause:after {
+  display: flex;
+  align-items: center;
+
+  content: '⏸';
+  width: 18px;
+  height: 18px;
+}
+
+.start:after {
+  
+  content: '▶';
+  color: rgba(175, 47, 47, 0.5);
+  width: 18px;
+  height: 18px;
 }
