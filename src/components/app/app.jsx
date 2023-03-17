@@ -14,7 +14,18 @@ export default class App extends Component {
     this.state = {
       todoData: [],
       activeFilter: 'all',
+
+      pause: true,
     };
+  }
+
+  componentDidUpdate() {
+    const { todoData, pause } = this.state;
+    if (!pause && todoData.filter((i) => i.pause === false && i.taskTime > 0).length > 0) {
+      this.timer();
+    }
+
+    console.log(todoData);
   }
 
   deleteItem = (id) => {
@@ -43,7 +54,10 @@ export default class App extends Component {
   addItem = (label, taskTime) => {
     this.setState(({ todoData }) => {
       return {
-        todoData: [...todoData, { label, id: uuid(), completed: false, createdDate: new Date(), taskTime }],
+        todoData: [
+          ...todoData,
+          { label, id: uuid(), completed: false, createdDate: new Date(), taskTime, pause: true },
+        ],
       };
     });
   };
@@ -63,10 +77,52 @@ export default class App extends Component {
     this.setState({ activeFilter: name });
   };
 
+  getTimerStatus = (pause, id) => {
+    // this.setState({ curentId: id, pause });
+    this.setState(({ todoData }) => {
+      return {
+        todoData: todoData.map((i) => {
+          if (i.id === id) i = { ...i, pause };
+          return i;
+        }),
+        pause,
+        curentId: id,
+      };
+    });
+  };
+
+  timer = () => {
+    const { todoData, pause } = this.state;
+
+    const timerid = setInterval(() => {
+      this.setState({
+        todoData: todoData.map((i) => {
+          if (!pause && i.taskTime > 0) i = { ...i, taskTime: i.taskTime - 1 };
+          if (i.taskTime === 0) clearTimeout(timerid);
+
+          return i;
+        }),
+      });
+    }, 1000);
+    if (pause) {
+      clearInterval(timerid);
+    }
+
+    if (todoData.filter((i) => i.taskTime === 0).length > 0) {
+      this.setState({
+        todoData: todoData.map((i) => {
+          if (i.taskTime === 0) i = { ...i, pause: true };
+
+          return i;
+        }),
+      });
+    }
+  };
+
   render() {
     const { todoData, activeFilter } = this.state;
-    console.log(todoData);
-    let viewItems = todoData;
+
+    let viewItems = [...todoData];
     if (activeFilter === 'completed') viewItems = todoData.filter((i) => i.completed);
     if (activeFilter === 'active') viewItems = todoData.filter((i) => !i.completed);
     if (activeFilter === 'all') viewItems = todoData;
@@ -85,6 +141,7 @@ export default class App extends Component {
             onEdit={this.editItem}
             onDeleted={this.deleteItem}
             onToggleDone={this.onToggleDone}
+            getTimerStatus={this.getTimerStatus}
           />
         </section>
         <Footer
