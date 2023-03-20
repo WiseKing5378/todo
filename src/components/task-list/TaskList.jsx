@@ -20,7 +20,7 @@ export default class TaskList extends Component {
   };
 
   render() {
-    const { todos, onDeleted, onToggleDone, onEdit, getTimerStatus } = this.props;
+    const { todos, onDeleted, onToggleDone, onEdit } = this.props;
     const elem = todos.map((i) => {
       const { label, id, completed, createdDate, taskTime } = i;
       return (
@@ -34,7 +34,6 @@ export default class TaskList extends Component {
           onEdit={(...args) => onEdit(...args)}
           onDeleted={() => onDeleted(id)}
           onToggleDone={() => onToggleDone(id)}
-          getTimerStatus={getTimerStatus}
         />
       );
     });

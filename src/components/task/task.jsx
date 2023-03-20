@@ -1,8 +1,8 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/static-property-placement */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-
 import './task.css';
 
 export default class Task extends Component {
@@ -31,13 +31,48 @@ export default class Task extends Component {
     this.state = {
       editing: false,
       editLabel: '',
-      pause: true,
+      pause: false,
+      timerId: null,
+      tasktime: 0,
     };
   }
 
-  // componentDidUpdate(prevProps, prevState){
+  componentDidMount() {
+    this.setState({ tasktime: this.props.taskTime });
+    const timer = setInterval(() => {
+      this.setState(({ tasktime, pause }) => {
+        if (!pause && tasktime > 0) {
+          return { timerId: timer, tasktime: tasktime - 1 };
+        }
+        return { timerId: timer };
+      });
+    }, 1000);
+  }
 
-  // }
+  componentDidUpdate(prevProps, prevState) {
+    const { pause, timerId } = this.state;
+    if (pause && !prevState.pause) {
+      clearInterval(timerId);
+    }
+    if (prevState.pause && !pause) {
+      clearInterval(timerId);
+
+      const timer = setInterval(() => {
+        this.setState(({ tasktime, pause: prevpause }) => {
+          if (!prevpause && tasktime > 0) {
+            return { timerId: timer, tasktime: tasktime - 1 };
+          }
+          return { timerId: timer };
+        });
+      }, 1000);
+    }
+  }
+
+  componentWillUnmount() {
+    const { timerId } = this.state;
+    clearInterval(timerId);
+  }
+
   onPenClick = () => {
     this.setState({
       editing: true,
@@ -68,20 +103,19 @@ export default class Task extends Component {
   };
 
   onTimerClick = () => {
-    const { pause } = this.state;
-    const { getTimerStatus, id } = this.props;
-    this.setState(() => {
+    this.setState(({ pause }) => {
       return { pause: !pause };
     });
-
-    getTimerStatus(!pause, id);
   };
 
   render() {
-    const { editing, pause } = this.state;
-    const { label, completed, onDeleted, onToggleDone, createdDate, id, taskTime } = this.props;
+    const { editing, pause, tasktime } = this.state;
+    const { label, completed, onDeleted, onToggleDone, createdDate, id } = this.props;
 
     let liClass = '';
+
+    const minute = Math.trunc(tasktime / 60);
+    const second = tasktime - minute * 60;
 
     if (completed) liClass = 'completed';
     if (editing) liClass = 'editing';
@@ -95,8 +129,17 @@ export default class Task extends Component {
           <label htmlFor={id}>
             <span className="description">{label}</span>
             <div className="time-manage-btn">
-              <button type="button" aria-label="task" className={timerbtn} onClick={this.onTimerClick} />
-              <span className="created">{taskTime}</span>
+              <button
+                type="button"
+                aria-label="task"
+                className={timerbtn}
+                onClick={() => {
+                  this.onTimerClick();
+                }}
+              />
+              <span className="created">{`${minute >= 10 ? minute : `0${minute}`}:${
+                second >= 10 ? second : `0${second}`
+              }`}</span>
             </div>
             <span className="created">created {formatDistanceToNow(createdDate, { includeSeconds: true })} ago</span>
           </label>
