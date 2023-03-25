@@ -11,9 +11,10 @@ function Task(props) {
   const [editLabel, setEditLabel] = useState('');
   const [pause, setPause] = useState(false);
   const [timerId, setTimerId] = useState(null);
-  const [tasktime, setTasktime] = useState(taskTime);
+  const [tasktime, setTasktime] = useState(0);
 
   useEffect(() => {
+    setTasktime(taskTime);
     const timer = setInterval(() => {
       if (tasktime > 0) {
         setTimerId(timer);
