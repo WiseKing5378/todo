@@ -1,99 +1,75 @@
 /* eslint-disable no-param-reassign */
-import { Component } from 'react';
+import { useState } from 'react';
 import uuid from 'react-uuid';
 
-import NewTaskForm from '../new-task-form';
+import NewTaskForm from '../newTaskForm';
 import Footer from '../footer';
-import TaskList from '../task-list';
+import TaskList from '../taskList';
 
 import './app.css';
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      todoData: [],
-      activeFilter: 'all',
-    };
-  }
+function App() {
+  const [todoData, setTodoData] = useState([]);
+  const [activeFilter, setActiveFilter] = useState('all');
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      return { todoData: todoData.filter((i) => i.id !== id) };
-    });
+  const deleteItem = (id) => {
+    setTodoData(todoData.filter((i) => i.id !== id));
   };
 
-  clearAllCompleted = () => {
-    this.setState(({ todoData }) => {
-      return { todoData: todoData.filter((i) => !i.completed) };
-    });
+  const clearAllCompleted = () => {
+    setTodoData(todoData.filter((i) => !i.completed));
   };
 
-  onToggleDone = (id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: todoData.map((i) => {
-          if (i.id === id) i = { ...i, completed: !i.completed };
-          return i;
-        }),
-      };
-    });
-  };
-
-  addItem = (label, taskTime) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: [...todoData, { label, id: uuid(), completed: false, createdDate: new Date(), taskTime }],
-      };
-    });
-  };
-
-  editItem = (newlabel, id) => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: todoData.map((i) => {
-          if (i.id === id) i = { ...i, label: newlabel };
-          return i;
-        }),
-      };
-    });
-  };
-
-  setActiveFilter = (name) => {
-    this.setState({ activeFilter: name });
-  };
-
-  render() {
-    const { todoData, activeFilter } = this.state;
-
-    let viewItems = [...todoData];
-    if (activeFilter === 'completed') viewItems = todoData.filter((i) => i.completed);
-    if (activeFilter === 'active') viewItems = todoData.filter((i) => !i.completed);
-    if (activeFilter === 'all') viewItems = todoData;
-
-    const activeItems = todoData.filter((i) => !i.completed).length;
-
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <NewTaskForm taskLabel={this.addItem} />
-        </header>
-        <section className="main">
-          <TaskList
-            todos={viewItems}
-            onEdit={this.editItem}
-            onDeleted={this.deleteItem}
-            onToggleDone={this.onToggleDone}
-          />
-        </section>
-        <Footer
-          setActiveFilter={this.setActiveFilter}
-          activeFilter={activeFilter}
-          activeItems={activeItems}
-          clearAllCompleted={this.clearAllCompleted}
-        />
-      </section>
+  const onToggleDone = (id) => {
+    setTodoData(
+      todoData.map((i) => {
+        if (i.id === id) i = { ...i, completed: !i.completed };
+        return i;
+      })
     );
-  }
+  };
+
+  const addItem = (label, taskTime) => {
+    setTodoData([...todoData, { label, id: uuid(), completed: false, createdDate: new Date(), taskTime }]);
+  };
+
+  const editItem = (newlabel, id) => {
+    setTodoData(
+      todoData.map((i) => {
+        if (i.id === id) i = { ...i, label: newlabel };
+        return i;
+      })
+    );
+  };
+
+  const getActiveFilter = (name) => {
+    setActiveFilter(name);
+  };
+
+  let viewItems = [...todoData];
+  if (activeFilter === 'completed') viewItems = todoData.filter((i) => i.completed);
+  if (activeFilter === 'active') viewItems = todoData.filter((i) => !i.completed);
+  if (activeFilter === 'all') viewItems = todoData;
+
+  const activeItems = todoData.filter((i) => !i.completed).length;
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <h1>todos</h1>
+        <NewTaskForm taskLabel={addItem} />
+      </header>
+      <section className="main">
+        <TaskList todos={viewItems} onEdit={editItem} onDeleted={deleteItem} onToggleDone={onToggleDone} />
+      </section>
+      <Footer
+        getActiveFilter={getActiveFilter}
+        activeFilter={activeFilter}
+        activeItems={activeItems}
+        clearAllCompleted={clearAllCompleted}
+      />
+    </section>
+  );
 }
+
+export default App;
