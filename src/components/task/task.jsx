@@ -25,25 +25,32 @@ function Task(props) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if (!pause && tasktime > 0) {
+      if (!pause && tasktime > 0 && !completed) {
         setTimerId(timer);
         setTasktime(tasktime - 1);
       }
     }, 1000);
+
     return () => clearInterval(timerId);
-  }, [pause, timerId, tasktime]);
+  }, [pause, timerId, tasktime, completed]);
 
   const onPenClick = () => {
     setEditing(true);
   };
 
   const onLabelChange = (e) => {
+    console.log(e);
+    if (e.keyCode === 27) {
+      setEditing(false);
+      e.target.value = label;
+    }
     setEditLabel(e.target.value);
   };
 
   const onSubmit = (e) => {
-    setEditing(false);
     e.preventDefault();
+
+    setEditing(false);
     onEdit(editLabel, id);
   };
 
@@ -57,7 +64,7 @@ function Task(props) {
   if (completed) liClass = 'completed';
   if (editing) liClass = 'editing';
 
-  const timerbtn = pause ? 'start' : 'pause';
+  const timerbtn = pause || completed ? 'start' : 'pause';
 
   return (
     <li className={liClass}>
@@ -65,12 +72,17 @@ function Task(props) {
         <input className="toggle" type="checkbox" onClick={onToggleDone} id={id} defaultChecked={completed} />
         <label htmlFor={id}>
           <span className="description">{label}</span>
-          <div className="time-manage-btn">
-            <button type="button" aria-label="task" className={timerbtn} onClick={onTimerClick} />
-            <span className="created">{`${minute >= 10 ? minute : `0${minute}`}:${
-              second >= 10 ? second : `0${second}`
-            }`}</span>
-          </div>
+          {tasktime ? (
+            <div className="time-manage-btn">
+              <button type="button" aria-label="task" className={timerbtn} onClick={onTimerClick} />
+              <span className="created">{`${minute >= 10 ? minute : `0${minute}`}:${
+                second >= 10 ? second : `0${second}`
+              }`}</span>
+            </div>
+          ) : (
+            <span className="created">Time left</span>
+          )}
+
           <span className="created">created {formatDistanceToNow(createdDate, { includeSeconds: true })} ago</span>
         </label>
         <button
@@ -84,7 +96,7 @@ function Task(props) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <input type="text" className="edit" defaultValue={label} onChange={onLabelChange} />
+        <input type="text" className="edit" defaultValue={label} onChange={onLabelChange} onKeyDown={onLabelChange} />
       </form>
     </li>
   );

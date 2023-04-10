@@ -156,7 +156,6 @@ li form {
 }
 
 .start:after {
-  
   content: '▶';
   color: rgba(175, 47, 47, 0.5);
   width: 18px;

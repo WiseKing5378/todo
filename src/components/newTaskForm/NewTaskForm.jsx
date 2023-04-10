@@ -39,7 +39,16 @@ function NewTaskForm(props) {
     <form className="new-task-form" onSubmit={onSubmit}>
       <input className="new-todo" name="task" value={label} placeholder="What needs to be done?" onChange={onChange} />
       <input type="number" value={min} min="0" name="min" className="new-todo" placeholder="Min" onChange={onChange} />
-      <input type="number" value={sec} min="0" name="sec" className="new-todo" placeholder="Sec" onChange={onChange} />
+      <input
+        type="number"
+        value={sec}
+        min="0"
+        max="59"
+        name="sec"
+        className="new-todo"
+        placeholder="Sec"
+        onChange={onChange}
+      />
       <button type="submit" />
     </form>
   );
